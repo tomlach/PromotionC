@@ -17,8 +17,6 @@ public class PromoCampaign {
     private String brand;
     private LocalDate start;
     private LocalDate end;
-
-
     private Integer customerID;
 
     public Integer getId() {
@@ -77,4 +75,7 @@ public class PromoCampaign {
         this.end = end;
     }
 
+    public void setCustomerID(Integer customerID) {
+        this.customerID = customerID;
+    }
 }

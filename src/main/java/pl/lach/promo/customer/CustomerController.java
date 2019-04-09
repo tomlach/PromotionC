@@ -3,11 +3,9 @@ package pl.lach.promo.customer;
 
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Objects;
@@ -25,6 +23,10 @@ public class CustomerController {
 
     @PostMapping("/customers")
     public ResponseEntity <Customer> save(@RequestBody Customer customer){
+        if (service.existByEmail(customer.getEmail())){
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+
         return ResponseEntity.ok(service.save(customer));
     }
 
@@ -34,6 +36,14 @@ public class CustomerController {
     }
 
 
+    @GetMapping("/customers/{email}")
+    public ResponseEntity<Customer> getByEmail(@PathVariable String email){
+    return ResponseEntity.ok(service.getCustomerByEmail(email));
+
     }
+
+}
+
+
 
 

@@ -1,32 +1,39 @@
 package pl.lach.promo.customer;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import pl.lach.promo.customer.Customer;
+import pl.lach.promo.role.Role;
+import pl.lach.promo.role.RoleRepository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 
 @Service
 public class CustomerService {
 
+    private CustomerRepository customerRepository;
+    private RoleRepository roleRepository;
+
+
 
     @Autowired
-    public CustomerService(CustomerRepository repository) {
+    public CustomerService(CustomerRepository repository, RoleRepository roleRepository) {
         this.repository = Objects.requireNonNull(repository, "Customer must be definied");
+        this.roleRepository = Objects.requireNonNull(roleRepository, "Role must be difnied");
+    }
+
+    public Customer save (Customer customer){
+        Optional<Role> role = roleRepository.findByName("ROLE_USER");
+        role.ifPresent(roleUser -> customer.setRoles(new HashSet<>(Arrays.asList(roleUser))));
+
+        return repository.save(customer);
     }
 
     private CustomerRepository repository;
 
-    public Customer save(Customer customer) {
-        return repository.save(customer);
-    }
+//    public Customer save(Customer customer) {
+//        return repository.save(customer);
+//    }
 
 
     public Optional<Customer> getCustomerByID(Integer id) {
@@ -35,6 +42,14 @@ public class CustomerService {
 
     public List<Customer> getAll(){
         return (List<Customer>) repository.findAll();
+    }
+
+    public boolean existByEmail(String email){
+        return repository.existsByEmail(email);
+    }
+
+    public Customer getCustomerByEmail (String email){
+        return repository.findByEmail(email);
     }
 
 
